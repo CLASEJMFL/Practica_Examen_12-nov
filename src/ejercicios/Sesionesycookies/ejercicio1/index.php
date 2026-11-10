@@ -5,6 +5,7 @@ if (!isset($_SESSION['suma'])) {
     $_SESSION['suma'] = 0;
     $_SESSION['contador'] = 0;
 }
+
 if (isset($_POST['sumar'])) {
     $numero = $_POST['sumar'];
     // Sumamos el nuevo número

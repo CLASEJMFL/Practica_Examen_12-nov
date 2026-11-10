@@ -4,7 +4,6 @@ Diseñar una clase Coche con los atributos matricula, modelo y precio. La clase 
 modeloCaro y precioCaro, que contendrá en todo momento el modelo del coche más caro y su precio. Los
 métodos a incluir son:
 
-
 	• constructor con todos los atributos
 	• getters y setters
 	• toString (devuelve los datos en columnas de fila de tabla: “matriculamodelo...”).
