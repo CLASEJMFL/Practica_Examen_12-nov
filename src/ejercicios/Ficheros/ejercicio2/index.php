@@ -1,12 +1,14 @@
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Ordenar fichero</title>
 </head>
+
 <body>
-    <body>
 
     <form action="" method="POST">
         Nombre del fichero:
@@ -15,39 +17,37 @@
     </form>
 
     <?php
-    // Comprueba si se ha enviado el nombre del fichero
+
     if (isset($_POST["fichero"])) {
+ 
+        if (!file_exists($_POST["fichero"])) { // Comprobamos si el fichero no existe.
 
-        // Guarda el nombre del fichero introducido en el formulario
-        $fichero = $_POST["fichero"];
+            echo "El archivo que quieres ordenar no existe, fijate que exista y comprueba la extension este bien";
 
-        // Lee todas las líneas del fichero y las guarda en un array
-        $palabras = file($fichero);
+        } else {
+            $fichero = $_POST["fichero"]; // Guardamos el nombre del fichero.
+            
+            $palabras = file($fichero); // Leemos todas las líneas y las guardamos en un array.
 
-        // Ordena alfabéticamente las palabras del array
-        sort($palabras);
+            $palabras = array_map("trim", $palabras); // Quitamos espacios y saltos de línea de cada elemento.
+           
+            sort($palabras); // Ordenamos alfabéticamente el array.
+           
+            $resultado = str_replace(".txt", "_sort.txt", $fichero); // Creamos el nombre del fichero nuevo.
 
-        // Cambia .txt por _sort.txt para crear el nombre del fichero resultado
-        $resultado = str_replace(".txt", "_sort.txt", $fichero);
+            $archivo = fopen($resultado, "w"); // Abrimos el fichero nuevo en modo escritura.
+           
+            foreach ($palabras as $palabra) { // Recorremos el array ordenado.
+                fwrite($archivo, $palabra . "\n"); // Escribimos cada palabra en una línea.
+            }
 
-        // Abre el fichero resultado en modo escritura
-        $archivo = fopen($resultado, "w");
+            fclose($archivo); // Cerramos el fichero.
 
-        // Recorre todas las palabras ordenadas
-        foreach ($palabras as $palabra) {
-
-            // Escribe cada palabra en una línea del fichero resultado
-            fwrite($archivo, $palabra . "\n");
+            echo "Fichero ordenado correctamente: " . $resultado; // Mostramos el resultado.
         }
-
-        // Cierra el fichero para guardar los cambios
-        fclose($archivo);
-
-        // Muestra un mensaje indicando que se ha creado el fichero ordenado
-        echo "Fichero ordenado correctamente: " . $resultado;
     }
     ?>
-
 </body>
-</body>
+<br>
+<a href="../../../index.php">Pagina Principal</a>
 </html>

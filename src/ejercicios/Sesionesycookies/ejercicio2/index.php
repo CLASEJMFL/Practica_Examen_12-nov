@@ -4,8 +4,8 @@
         setcookie("bg", $fondo, time() + 60*60); // <= Creamos una cookie llamada "bg" que guarda el color durante 1 hora
     } elseif (isset($_COOKIE["bg"])) { // <=Si no hemos enviado un color nuevo, comprobamos si ya existe una cookie
         $fondo = $_COOKIE["bg"]; // <=  Recuperamos el color que estaba guardado anteriormente en la cookie
-    } else { // <= Si no hemos enviado ningún color y tampoco existe una cookie
-        $fondo = "white"; // <= Ponemos el fondo blanco por defecto
+    } else { // <= Si no hemos enviado ningún color y tampoco existe una cookie ponemos el fondo blanco por defecto
+        $fondo = "white"; 
     }
 ?>
 
@@ -30,6 +30,9 @@
         <input type="color" name="fondo" required>
         <input type="submit" name="Enviar">
     </form>
-    <a href="../../../index.php">Página Principal</a>
+
 </body>
+
+    <a href="../../../index.php">Página Principal</a>
+
 </html>

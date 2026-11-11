@@ -2,16 +2,12 @@
 
 // Función que escribe números en el fichero según el modo elegido
 function escribirNumerosMod($numeros, $modo = "")
-{
-
+{   
     // Convierte el array de números en un texto separado por saltos de línea
     $texto = implode("\n", $numeros) . "\n";
 
-    // Comprueba si el modo elegido es sobreescribir
-    if ($modo == "sobreescribir") {
-
-        // Escribe en el fichero borrando su contenido anterior
-        file_put_contents("numeros.txt", $texto);
+    if ($modo == "sobreescribir") { 
+        file_put_contents("numeros.txt", $texto); // Escribe en el fichero borrando su contenido anterior
     } else {
 
         // Añade los números al final del fichero sin borrar lo anterior
@@ -33,14 +29,11 @@ function leerContenidoFichero()
     }
 }
 
-// Comprueba si se ha pulsado el botón enviar
-if (isset($_POST["enviar"])) {
+if (isset($_POST["enviar"])) { // Comprueba si se ha pulsado el botón enviar
 
-    // Separa los números introducidos por comas y los guarda en un array
-    $numeros = explode(",", $_POST["numeros"]);
-
-    // Llama a la función para escribir los números usando el modo seleccionado
-    escribirNumerosMod($numeros, $_POST["modo"]);
+    $numeros = explode(",", $_POST["numeros"]); // Separa los números introducidos por comas y los guarda en un array
+   
+    escribirNumerosMod($numeros, $_POST["modo"]); // Llama a la función para escribir los números usando el modo seleccionado
 }
 
 ?>
@@ -83,5 +76,5 @@ if (isset($_POST["enviar"])) {
     ?>
 
 </body>
-
+<a href="../../../index.php">Pagina Principal</a>
 </html>

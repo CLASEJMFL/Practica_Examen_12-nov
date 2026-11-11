@@ -1,29 +1,88 @@
 <?php
+// Activamos el búfer de salida antes de cualquier contenido.
+// Esto evita que una salida accidental impida enviar cabeceras.
+ob_start();
 
-session_start();
-
+// 1. Cargamos las clases.
 require_once __DIR__ . "/Coche.php";
 require_once __DIR__ . "/CocheLujo.php";
 
+// 2. Iniciamos la sesión.
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// 3. Inicializamos el array de coches si no existe.
 if (!isset($_SESSION["coches"])) {
     $_SESSION["coches"] = [];
 }
 
-if (isset($_POST["crear"])) {
+// 4. Procesamos el formulario.
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["crear"])) {
 
-    $matricula = $_POST["matricula"];
-    $modelo = $_POST["modelo"];
-    $precio = $_POST["precio"];
+    $matricula = trim($_POST["matricula"] ?? "");
+    $modelo = trim($_POST["modelo"] ?? "");
+    $precio = $_POST["precio"] ?? "";
 
-    if (isset($_POST["lujo"])) {
-        $suplemento = $_POST["suplemento"];
+    if (
+        $matricula !== "" &&
+        $modelo !== "" &&
+        $precio !== "" &&
+        is_numeric($precio) &&
+        (float)$precio >= 0
+    ) {
 
-        $coche = new CocheLujo($matricula, $modelo, $precio, $suplemento);
-    } else {
-        $coche = new Coche($matricula, $modelo, $precio);
+        // Si se ha marcado la casilla de coche de lujo.
+        if (isset($_POST["lujo"])) {
+
+            $suplemento = $_POST["suplemento"] ?? "0";
+
+            if (is_numeric($suplemento) && (float)$suplemento >= 0) {
+
+                $coche = new CocheLujo(
+                    $matricula,
+                    $modelo,
+                    $precio,
+                    $suplemento
+                );
+
+                // Guardamos el coche de lujo en la sesión.
+                $_SESSION["coches"][] = $coche;
+            }
+
+        } else {
+
+            // Creamos un coche normal.
+            $coche = new Coche(
+                $matricula,
+                $modelo,
+                $precio
+            );
+
+            // Guardamos el coche normal en la sesión.
+            $_SESSION["coches"][] = $coche;
+        }
     }
 
-    $_SESSION["coches"][] = $coche;
+    // Guardamos la sesión y redirigimos.
+    session_write_close();
+
+    header("Location: " . $_SERVER["PHP_SELF"]);
+    exit;
+}
+
+// 5. Calculamos el coche más caro.
+$modeloCaro = "";
+$precioCaro = -1;
+
+foreach ($_SESSION["coches"] as $coche) {
+
+    // En los coches de lujo getPrecio() incluye el suplemento.
+    if ($coche->getPrecio() > $precioCaro) {
+
+        $precioCaro = $coche->getPrecio();
+        $modeloCaro = $coche->getModelo();
+    }
 }
 
 ?>
@@ -33,39 +92,103 @@ if (isset($_POST["crear"])) {
 
 <head>
     <meta charset="UTF-8">
-    <title>Ejercicio 9</title>
+    <title>Gestión de coches</title>
 </head>
 
 <body>
 
-    <h2>Coche más caro: <?php echo Coche::masCaro(); ?></h2>
+    <h1>Gestión de coches</h1>
 
-    <h2>Crear coche</h2>
+    <!-- 6. Mostramos el coche más caro. -->
 
-    <form method="POST">
+    <h2>Coche más caro:</h2>
 
-        Matrícula:
-        <input type="text" name="matricula" required>
+    <?php if (count($_SESSION["coches"]) > 0): ?>
 
-        Modelo:
-        <input type="text" name="modelo" required>
+        <p>
+            <?php
+            echo htmlspecialchars($modeloCaro) . " - "
+                . number_format($precioCaro, 2, ',', '.') . " €";
+            ?>
+        </p>
 
-        Precio:
-        <input type="number" name="precio" required>
+    <?php else: ?>
 
-        <br><br>
+        <p>Todavía no hay coches guardados.</p>
 
-        ¿Es de lujo?
-        <input type="checkbox" name="lujo">
+    <?php endif; ?>
 
-        Suplemento:
-        <input type="number" name="suplemento" value="0">
 
-        <br><br>
+    <!-- 7. Formulario para crear coches. -->
 
-        <input type="submit" name="crear" value="Crear coche">
+    <h2>Crear un coche</h2>
+
+    <form method="POST" action="">
+
+        <p>
+            <label for="matricula">Matrícula:</label>
+            <input
+                type="text"
+                id="matricula"
+                name="matricula"
+                required
+            >
+        </p>
+
+        <p>
+            <label for="modelo">Modelo:</label>
+            <input
+                type="text"
+                id="modelo"
+                name="modelo"
+                required
+            >
+        </p>
+
+        <p>
+            <label for="precio">Precio:</label>
+            <input
+                type="number"
+                id="precio"
+                name="precio"
+                min="0"
+                step="0.01"
+                required
+            >
+        </p>
+
+        <p>
+            <input
+                type="checkbox"
+                id="lujo"
+                name="lujo"
+                value="1"
+            >
+            <label for="lujo">¿Es un coche de lujo?</label>
+        </p>
+
+        <p>
+            <label for="suplemento">Suplemento:</label>
+            <input
+                type="number"
+                id="suplemento"
+                name="suplemento"
+                min="0"
+                step="0.01"
+                value="0"
+            >
+        </p>
+
+        <input
+            type="submit"
+            name="crear"
+            value="Crear coche"
+        >
 
     </form>
+
+
+    <!-- 8. Listado de coches guardados en la sesión. -->
 
     <h2>Listado de coches</h2>
 
@@ -78,28 +201,32 @@ if (isset($_POST["crear"])) {
             <th>Suplemento</th>
         </tr>
 
-        <?php
+        <?php foreach ($_SESSION["coches"] as $coche): ?>
 
-        foreach ($_SESSION["coches"] as $coche) {
+            <tr>
 
-            echo "<tr>";
-            echo $coche;
+                <?php
+                // Mostramos el objeto mediante su método __toString().
+                echo $coche;
 
-            if ($coche instanceof CocheLujo) {
-                // El suplemento ya aparece en el toString
-            } else {
-                echo "<td>No procede</td>";
-            }
+                // Si es un coche normal, no tiene suplemento.
+                if (!($coche instanceof CocheLujo)) {
+                    echo "<td>No procede</td>";
+                }
+                ?>
 
-            echo "</tr>";
-        }
+            </tr>
 
-        ?>
+        <?php endforeach; ?>
 
     </table>
 
+
+    <!-- 9. Enlace a la página principal. -->
+
+    <p>
+        <a href="../../../index.php">Página Principal</a>
+    </p>
+
 </body>
-
-<a href="../../../index.php">Pagina Principal</a>
-
 </html>

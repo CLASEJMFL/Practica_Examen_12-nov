@@ -3,27 +3,20 @@
 
 class Coche
 {
-
+    // Atributos comunes a todos los coches.
     protected $matricula;
     protected $modelo;
     protected $precio;
 
-    protected static $modeloCaro = "";
-    protected static $precioCaro = 0;
-
+    // Constructor: se ejecuta al crear un coche con new Coche().
     public function __construct($matricula, $modelo, $precio)
     {
         $this->matricula = $matricula;
         $this->modelo = $modelo;
-        $this->precio = $precio;
-
-        if ($precio > self::$precioCaro) {
-            self::$precioCaro = $precio;
-            self::$modeloCaro = $modelo;
-        }
+        $this->precio = (float) $precio;
     }
 
-    // Getters
+    // GETTERS: permiten consultar los atributos.
     public function getMatricula()
     {
         return $this->matricula;
@@ -39,7 +32,7 @@ class Coche
         return $this->precio;
     }
 
-    // Setters
+    // SETTERS: permiten modificar los atributos.
     public function setMatricula($matricula)
     {
         $this->matricula = $matricula;
@@ -52,22 +45,14 @@ class Coche
 
     public function setPrecio($precio)
     {
-        $this->precio = $precio;
+        $this->precio = (float) $precio;
     }
 
-    // ToString
+    // Se ejecuta automáticamente cuando hacemos echo $coche.
     public function __toString()
     {
-        return "<td>$this->matricula</td>
-                <td>$this->modelo</td>
-                <td>" . $this->getPrecio() . "</td>";
-    }
-
-
-    // Método de clase
-    public static function masCaro()
-    {
-        return self::$modeloCaro . " - " . self::$precioCaro . " €";
+        return "<td>" . htmlspecialchars($this->matricula) . "</td>"
+             . "<td>" . htmlspecialchars($this->modelo) . "</td>"
+             . "<td>" . number_format($this->getPrecio(), 2, ',', '.') . " €</td>";
     }
 }
-?>
