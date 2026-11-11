@@ -1,28 +1,27 @@
 <?php
-session_start();
-// Si todavía no existen las sesiones, las inicializamos
-if (!isset($_SESSION['suma'])) {
+session_start(); // <= iniciamos la sesion
+if (!isset($_SESSION['suma'])) { // < en caso de que no existan las variables las crea en la sesion y las inicia a 0;
     $_SESSION['suma'] = 0;
     $_SESSION['contador'] = 0;
 }
 
 if (isset($_POST['sumar'])) {
-    $numero = $_POST['sumar'];
-    // Sumamos el nuevo número
-    $_SESSION['suma'] += $numero;
-    // Aumentamos el contador
-    $_SESSION['contador']++;
-    // Comprobamos si la suma supera 10000
-    if ($_SESSION['suma'] > 10000) {
+    $numero = $_POST['sumar']; // <= metemos el numero que enviamos con 'sumar' a una variable para trabajarla dentro
+    $_SESSION['suma'] += $numero; // <= Sumamos el nuevo número
+    $_SESSION['contador']++; // <= Aumentamos el contador para contar los numeros que hay dentro y sacar media
+    
+    if ($_SESSION['suma'] > 10000) { // <= Comprobamos si la suma supera 10000
         $media = $_SESSION['suma'] / $_SESSION['contador'];
+        // Sacamos los datos:
         echo "Suma total: " . $_SESSION['suma'] . "<br>";
         echo "Números introducidos: " . $_SESSION['contador'] . "<br>";
         echo "Media: " . $media . "<br>";
-        // Destruimos las sesiones para poder empezar de nuevo
-        session_destroy();
+        
+        session_destroy(); // <= Destruimos las sesiones para poder empezar de nuevo asi podemos seguir metiendo numeros
     }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
 

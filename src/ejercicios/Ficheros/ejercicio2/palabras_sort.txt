@@ -1,0 +1,4 @@
+fresa
+manzana
+pera
+platano
