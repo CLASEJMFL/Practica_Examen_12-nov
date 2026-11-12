@@ -1,80 +1,66 @@
-<?php
-
-// Función que escribe números en el fichero según el modo elegido
-function escribirNumerosMod($numeros, $modo = "")
-{   
-    // Convierte el array de números en un texto separado por saltos de línea
-    $texto = implode("\n", $numeros) . "\n";
-
-    if ($modo == "sobreescribir") { 
-        file_put_contents("numeros.txt", $texto); // Escribe en el fichero borrando su contenido anterior
-    } else {
-
-        // Añade los números al final del fichero sin borrar lo anterior
-        file_put_contents("numeros.txt", $texto, FILE_APPEND);
-    }
-}
-
-// Función que lee y muestra el contenido del fichero
-function leerContenidoFichero()
-{
-    // Lee todas las líneas del fichero y las guarda en un array
-    $contenido = file("numeros.txt");
-
-    // Recorre todas las líneas del fichero
-    foreach ($contenido as $numero) {
-
-        // Muestra cada número seguido de un salto de línea HTML
-        echo $numero . "<br>";
-    }
-}
-
-if (isset($_POST["enviar"])) { // Comprueba si se ha pulsado el botón enviar
-
-    $numeros = explode(",", $_POST["numeros"]); // Separa los números introducidos por comas y los guarda en un array
-   
-    escribirNumerosMod($numeros, $_POST["modo"]); // Llama a la función para escribir los números usando el modo seleccionado
-}
-
-?>
 
 <!DOCTYPE html>
-<html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ordenar fichero</title>
+</head>
 
 <body>
 
-    <h2>Introducir números</h2>
-
-    <!-- Formulario para introducir números y elegir el modo de escritura -->
-    <form method="POST">
-
-        Números:
-        <input type="text" name="numeros" required>
-
-        <!-- Selector para elegir si añadir o sobreescribir -->
-        <select name="modo">
-            <option value="añadir">Añadir</option>
-            <option value="sobreescribir">Sobreescribir</option>
-        </select>
-
-        <!-- Botón que envía el formulario -->
-        <input type="submit" name="enviar" value="Enviar">
-
+    <!-- Formulario para introducir el nombre del fichero -->
+    <form action="" method="POST">
+        Nombre del fichero:
+        <input type="text" name="fichero" required>
+        <input type="submit" value="Ordenar">
     </form>
-
-    <h2>Contenido del fichero:</h2>
 
     <?php
 
-    // Comprueba si el fichero existe
-    if (file_exists("numeros.txt")) {
+    // Comprobamos si hemos enviado el nombre del fichero.
+    if (isset($_POST["fichero"])) {
 
-        // Si existe, llama a la función que muestra su contenido
-        leerContenidoFichero();
+        // Comprobamos si el fichero no existe.
+        if (!file_exists($_POST["fichero"])) {
+
+            echo "El archivo que quieres ordenar no existe, fijate que exista y comprueba la extension este bien";
+
+        } else {
+
+            // Guardamos el nombre del fichero en una variable.
+            $fichero = $_POST["fichero"];
+
+            // Leemos todas las líneas del fichero y las guardamos en un array.
+            $palabras = file($fichero);
+
+            // Quitamos los espacios y saltos de línea de cada elemento del array.
+            $palabras = array_map("trim", $palabras);
+
+            // Ordenamos alfabéticamente las palabras del array.
+            sort($palabras);
+
+            // Creamos el nombre del nuevo fichero añadiendo _sort antes de la extensión.
+            $resultado = str_replace(".txt", "_sort.txt", $fichero);
+
+            // Unimos todas las palabras en un texto separándolas por saltos de línea.
+            $texto = implode("\n", $palabras) . "\n";
+
+            // Escribimos el texto ordenado en el nuevo fichero.
+            file_put_contents($resultado, $texto);
+
+            // Mostramos el nombre del fichero creado.
+            echo "Fichero ordenado correctamente: " . $resultado;
+        }
     }
 
     ?>
 
+    <br>
+
+    <!-- Enlace para volver a la página principal -->
+    <a href="../../../index.php">Pagina Principal</a>
+
 </body>
-<a href="../../../index.php">Pagina Principal</a>
 </html>

@@ -12,6 +12,8 @@
         <li><a href="ejercicios/Ficheros/ejercicio1/index.php">Ejercicio3</a></li>
         <li><a href="ejercicios/Ficheros/ejercicio2/index.php">Ejercicio4</a></li>
         <li><a href="ejercicios/POO/ejercicio1/index.php">Ejercicio5</a></li>
+        <li><a href="ejercicios/POO/ejercicio9/index.php">Ejercicio6</a></li>
+
     </ul>
 </body>
 </html>

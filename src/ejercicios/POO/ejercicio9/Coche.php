@@ -49,10 +49,7 @@ class Coche
     }
 
     // Se ejecuta automáticamente cuando hacemos echo $coche.
-    public function __toString()
-    {
-        return "<td>" . htmlspecialchars($this->matricula) . "</td>"
-             . "<td>" . htmlspecialchars($this->modelo) . "</td>"
-             . "<td>" . number_format($this->getPrecio(), 2, ',', '.') . " €</td>";
+    public function __toString() {
+        return "Coche: " . $this->modelo ." con la matricula: " . $this->matricula ." tiene el precio de: " . $this->precio;
     }
 }
